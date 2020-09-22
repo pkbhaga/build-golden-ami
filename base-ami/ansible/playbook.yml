@@ -1,0 +1,14 @@
+---
+- name: Provision base-ami
+  hosts: all
+  gather_facts: yes
+  become: yes
+
+  vars_files:
+    - ./variables/variables.yml
+
+  tasks:
+    - import_tasks: tasks/base-ami.yml
+
+  handlers:
+    - import_tasks: handlers/reboot.yml

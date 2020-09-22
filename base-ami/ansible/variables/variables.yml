@@ -1,0 +1,10 @@
+#############
+# Passwords #
+#############
+# This is a hard-coded password because access to the VNC server requires an SSH local port forward.
+# So, you need to already be able to SSH directly onto the server.
+# If you can do that, you can get a gui too.
+vnc_pass: goodhacks
+# Password-based SSH is disabled, so similarly using this password requires already SSHing to the system as the kali user
+kali_user_pass: kali
+
