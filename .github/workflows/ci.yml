@@ -4,7 +4,7 @@ name: CI
 on: [pull_request]
 
 jobs:
-  Initialize:
+  Packer:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,8 +20,15 @@ jobs:
           make install-infra-build-tools
           pip install ansible
           ansible-galaxy install -r base-ami/ansible/requirements.yml
+
+      - name: packer-validate
+        run: packer validate -syntax-only base-ami/ami.json
+    
+      - name: packer-inspect
+        run: packer inspect base-ami/ami.json
+
           
-  terraform:
+  Terraform:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,5 +49,8 @@ jobs:
 
       - name: terraform-plan
         run: cd base-ami/terraform && terraform plan  
-          
-        
+        env:
+          AWS_MAX_ATTEMPTS: 90
+          AWS_POLL_DELAY_SECONDS: 60
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
