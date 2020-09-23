@@ -1,5 +1,5 @@
 ---
-name: Build
+name: cd 
 
 on:
   push:
@@ -20,10 +20,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          make install-base
+          make install-infra-build-tools
           pip install wheel
           pip install ansible
-          ansible-galaxy collection install -r kali/ansible/requirements.yml
+          ansible-galaxy install -r base-ami/ansible/requirements.yml
 
       - name: Packer build
         run: packer build base-ami/ami.json
@@ -48,6 +48,9 @@ jobs:
     
       - name: Plan
         run: cd base-ami/terraform && terraform plan
+
+      - name: Apply
+        run: cd base-ami/terraform && terraform apply
       
 
 
