@@ -1,0 +1,53 @@
+---
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  packer-cd:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          make install-base
+          pip install wheel
+          pip install ansible
+          ansible-galaxy collection install -r kali/ansible/requirements.yml
+
+      - name: Packer build
+        run: packer build base-ami/ami.json
+        env:
+          AWS_MAX_ATTEMPTS: 90
+          AWS_POLL_DELAY_SECONDS: 60
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  terraform-cd:
+    runs-on: ubuntu-latest
+
+    steps: 
+      - uses: actions/checkout@v2
+
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Init
+        run: cd base-ami/terraform && terraform init
+    
+      - name: Plan
+        run: cd base-ami/terraform && terraform plan
+      
+
+
