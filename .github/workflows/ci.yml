@@ -4,7 +4,7 @@ name: CI
 on: [pull_request]
 
 jobs:
-  Initialize:
+  Packer CI:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,8 +20,14 @@ jobs:
           make install-infra-build-tools
           pip install ansible
           ansible-galaxy install -r base-ami/ansible/requirements.yml
-          
-  terraform:
+
+      - name: packer-validate
+        run: packer validate -syntax-only base-ami/ami.json
+    
+      - name: packer-inspect
+        run: packer inspect base-ami/ami.json
+
+  Terraform CI:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,5 +48,3 @@ jobs:
 
       - name: terraform-plan
         run: cd base-ami/terraform && terraform plan  
-          
-        

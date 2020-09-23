@@ -57,6 +57,7 @@
         {
             "type": "ansible",
             "playbook_file": "base-ami/ansible/playbook.yml",
+            "galaxy_file": "base-ami/ansible/requirements.yml",
             "user": "kali",
             "host_alias": "kali",
             "extra_arguments": [
